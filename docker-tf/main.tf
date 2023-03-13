@@ -27,3 +27,10 @@ resource "docker_container" "nginx" {
   }
 }
 
+variable "magneto"{
+
+    type = string
+    description = "The name of a container"
+    default = "professor-x"
+
+}

@@ -17,25 +17,33 @@ provider "null" {
 }
 
 /* a list of local variables */
-
+/*
 locals {
-  Machines = [{ "RAM" = "5Gi", "CPU" = "5", "Name" = "alpha" }, { "RAM" = "3Gi", "CPU" = "3", "Name" = "bravo" }]
+  Machines = { "RAM" = "5Gi", "CPU" = "5",  "Name" = "alpha" }, { "RAM" = "3Gi", "CPU" = "3", "Name" = "bravo"}
 }
+*/
+
+locals { Machines = {
+                     "alpha" = {"RAM" = "5Gi"
+                                "CPU" = "5"},
+                     "bravo" = {"RAM" = "3Gi"
+                                "CPU" = "3"}
+       }}
 
 /* The null_resource implements the standard resource lifecycle but takes no more action */
 resource "null_resource" "Machines" {
-  for_each = toset(local.Machines)
+  for_each = local.Machines
   /* triggers allows specifying a random set of values that when
      changed will cause the resource to be replaced */
   triggers = {
     # name = each.value  // a special variable, "each" created by terraform
     // the object has "each.key" and "each.value"
-    # CPU count = each.value.CPU
-    # RAM count = each.value.RAM
-    # Name count = each.value.Name
+    CPU_count = each.value.CPU    # return the map {RAM=whatever CPU =whatever}
+    RAM_count = each.value.RAM
+    Name_count = each.key
 
-    Resource_name  = each.key
-    resource_value = each.value
+    #Resource_name  = each.key
+    #resource_value = each.value
 
   }
 }
